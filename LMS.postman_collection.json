@@ -1,0 +1,1730 @@
+{
+	"info": {
+		"_postman_id": "790a1b17-3ffa-4dc1-8dff-ffc4e01354be",
+		"name": "LMS",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "13687647"
+	},
+	"item": [
+		{
+			"name": "User Management",
+			"item": [
+				{
+					"name": "Register",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let first_name = pm.variables.replaceIn('{{$randomFirstName}}');",
+									"let last_name = pm.variables.replaceIn('{{$randomLastName}}');",
+									"let email = pm.variables.replaceIn('{{$randomEmail}}');",
+									"let phone_number = pm.variables.replaceIn('{{$randomPhoneNumber}}');",
+									"let password = pm.variables.replaceIn('{{$randomPassword}}');",
+									"",
+									"let body = {",
+									"    'email': email,",
+									"    'name': `${first_name} ${last_name}`,",
+									"    'password': password,",
+									"    'phone_number': phone_number",
+									"};",
+									"",
+									"pm.environment.set('request_body', JSON.stringify(body));",
+									"pm.collectionVariables.set('user_email',  `${email}`);",
+									"pm.collectionVariables.set('password',  `${password}`);",
+									"pm.collectionVariables.set('name',  `${first_name} ${last_name}`);",
+									"pm.collectionVariables.set('phone_number',  `${phone_number}`);",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{{request_body}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{user_svc}}/register"
+					},
+					"response": []
+				},
+				{
+					"name": "Activate",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{user_svc}}/activate/{{activation_code}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"",
+									"let body = {",
+									"    'email': pm.collectionVariables.get('user_email'),",
+									"    'password': pm.collectionVariables.get('password')",
+									"};",
+									"",
+									"pm.environment.set('request_body', JSON.stringify(body));"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseJson = pm.response.json();",
+									"",
+									"pm.collectionVariables.set('access_token', responseJson['access_token']);",
+									"pm.collectionVariables.set('refresh_token', responseJson['refresh_token']);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{{request_body}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{user_svc}}/login"
+					},
+					"response": []
+				},
+				{
+					"name": "Init Reset password",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let body = {",
+									"    'email': pm.collectionVariables.get('user_email')",
+									"};",
+									"",
+									"pm.environment.set('request_body', JSON.stringify(body));"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{{request_body}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{user_svc}}/reset_password"
+					},
+					"response": []
+				},
+				{
+					"name": "Start Reset password",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{user_svc}}/reset_password/{{reset_code}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Complete Reset password",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"",
+									"let body = {",
+									"    'email': pm.collectionVariables.get('user_email'),",
+									"    'password': 'new_password'",
+									"};",
+									"",
+									"pm.environment.set('request_body', JSON.stringify(body));",
+									"pm.collectionVariables.set('password', body.password);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{{request_body}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{user_svc}}/reset_password/{{reset_code}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh token",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseJson = pm.response.json();",
+									"",
+									"pm.collectionVariables.set('access_token', responseJson['access_token']);",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{refresh_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{user_svc}}/token/refresh"
+					},
+					"response": []
+				},
+				{
+					"name": "Profile",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set('user_guid', pm.response.json()['data']['guid'])"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"packages": {},
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": "localhost:5000/profile"
+					},
+					"response": []
+				},
+				{
+					"name": "Profile update",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let address = pm.variables.replaceIn('{{$randomStreetAddress}}');",
+									"let profile_img_url = pm.variables.replaceIn('{{$randomImageUrl}}');",
+									"",
+									"let body = {",
+									"    'email': pm.collectionVariables.get('user_email'),",
+									"    'name': pm.collectionVariables.get('name'),",
+									"    'phone_number': pm.collectionVariables.get('phone_number'),",
+									"    'address': address,",
+									"    'profile_img': profile_img_url,",
+									"    'likes': ['jumble'],",
+									"    'new_book_notification': true",
+									"};",
+									"",
+									"pm.environment.set('request_body', JSON.stringify(body));"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{{request_body}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{user_svc}}/profile"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Admin Management",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"",
+									"let body = {",
+									"    'email': pm.collectionVariables.get('admin_user_email'),",
+									"    'password': pm.collectionVariables.get('admin_password')",
+									"};",
+									"",
+									"pm.environment.set('request_body', JSON.stringify(body));"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseJson = pm.response.json();",
+									"",
+									"pm.collectionVariables.set('admin_access_token', responseJson['access_token']);",
+									"pm.collectionVariables.set('admin_refresh_token', responseJson['refresh_token']);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{{request_body}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{user_svc}}/login"
+					},
+					"response": []
+				},
+				{
+					"name": "get users",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let first_name = pm.variables.replaceIn('{{$randomFirstName}}');",
+									"let last_name = pm.variables.replaceIn('{{$randomLastName}}');",
+									"let email = pm.variables.replaceIn('{{$randomEmail}}');",
+									"let phone_number = pm.variables.replaceIn('{{$randomPhoneNumber}}');",
+									"let password = pm.variables.replaceIn('{{$randomPassword}}');",
+									"",
+									"let body = {",
+									"    'email': email,",
+									"    'name': `${first_name} ${last_name}`,",
+									"    'password': password,",
+									"    'phone_number': phone_number",
+									"};",
+									"",
+									"pm.environment.set('request_body', JSON.stringify(body));",
+									"pm.collectionVariables.set('user_email',  `${email}`);",
+									"pm.collectionVariables.set('password',  `${password}`);",
+									"pm.collectionVariables.set('name',  `${first_name} ${last_name}`);",
+									"pm.collectionVariables.set('phone_number',  `${phone_number}`);",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{{request_body}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{admin_svc}}/users?page=0",
+							"host": [
+								"{{admin_svc}}"
+							],
+							"path": [
+								"users"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update user",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let address = pm.variables.replaceIn('{{$randomStreetAddress}}');",
+									"let profile_img_url = pm.variables.replaceIn('{{$randomImageUrl}}');",
+									"",
+									"let body = {",
+									"    'activated': true,",
+									"    'address': address,",
+									"    'email': 'Kelli_Pollich@hotmail.com',",
+									"    'likes': [],",
+									"    'name': 'Leonie Krajcik',",
+									"    'phone_number': '517-481-1288',",
+									"    'profile_img': profile_img_url,",
+									"    'role': 'regular',",
+									"    'new_book_notification': true",
+									"};",
+									"",
+									"pm.environment.set('request_body', JSON.stringify(body));",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{{request_body}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{admin_svc}}/users/{{user_guid}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Init Reset password",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let body = {",
+									"    'email': pm.collectionVariables.get('admin_user_email')",
+									"};",
+									"",
+									"pm.environment.set('request_body', JSON.stringify(body));"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{{request_body}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{user_svc}}/reset_password"
+					},
+					"response": []
+				},
+				{
+					"name": "Start Reset password",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{user_svc}}/reset_password/{{reset_code}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Complete Reset password",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"",
+									"let body = {",
+									"    'email': pm.collectionVariables.get('admin_user_email'),",
+									"    'password': 'new_password'",
+									"};",
+									"",
+									"pm.environment.set('request_body', JSON.stringify(body));",
+									"pm.collectionVariables.set('password', body.password);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{{request_body}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{user_svc}}/reset_password/{{reset_code}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh token",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responseJson = pm.response.json();",
+									"",
+									"pm.collectionVariables.set('admin_access_token', responseJson['access_token']);",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_refresh_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{user_svc}}/token/refresh"
+					},
+					"response": []
+				},
+				{
+					"name": "Profile",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_access_token}}",
+								"type": "text"
+							}
+						],
+						"url": "{{user_svc}}/profile"
+					},
+					"response": []
+				},
+				{
+					"name": "Profile update",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let address = pm.variables.replaceIn('{{$randomStreetAddress}}');",
+									"let profile_img_url = pm.variables.replaceIn('{{$randomImageUrl}}');",
+									"let phone_number = pm.variables.replaceIn('{{$randomPhoneNumber}}');",
+									"",
+									"let body = {",
+									"    'email': pm.collectionVariables.get('admin_user_email'),",
+									"    'name': 'Laplace',",
+									"    'phone_number': phone_number,",
+									"    'address': address,",
+									"    'profile_img': profile_img_url,",
+									"    'likes': []",
+									"};",
+									"",
+									"pm.environment.set('request_body', JSON.stringify(body));"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{{request_body}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{user_svc}}/profile"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Book Management",
+			"item": [
+				{
+					"name": "Get books",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{book_svc}}/books?q=&page=0",
+							"host": [
+								"{{book_svc}}"
+							],
+							"path": [
+								"books"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": ""
+								},
+								{
+									"key": "page",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get book",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{book_svc}}/books/{{book_guid}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Create book",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let title = pm.variables.replaceIn('{{$randomLoremWords}}');",
+									"let description = pm.variables.replaceIn('{{$randomLoremSentences}}');",
+									"let author = pm.variables.replaceIn('{{$randomFullName}}');",
+									"let img_url = pm.variables.replaceIn('{{$randomImageUrl}}');",
+									"let genre = pm.variables.replaceIn('{{$randomLoremWord}}')",
+									"",
+									"let body = {",
+									"    'title': title,",
+									"    'author': author,",
+									"    'genre': 'jumble',",
+									"    'description': description,",
+									"    'img_url': img_url,",
+									"    'available': true,",
+									"    'reserved': false",
+									"};",
+									"",
+									"pm.environment.set('request_body', JSON.stringify(body));",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set('book_guid', pm.response.json()['data']['guid']);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{{request_body}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{book_svc}}/books"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Book",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let title = pm.variables.replaceIn('{{$randomLoremWords}}');",
+									"let description = pm.variables.replaceIn('{{$randomLoremSentences}}');",
+									"let author = pm.variables.replaceIn('{{$randomFullName}}');",
+									"let img_url = pm.variables.replaceIn('{{$randomImageUrl}}');",
+									"let genre = pm.variables.replaceIn('{{$randomLoremWord}}')",
+									"",
+									"let body = {",
+									"    'title': title,",
+									"    'author': author,",
+									"    'genre': genre,",
+									"    'description': description,",
+									"    'img_url': img_url,",
+									"    'available': true,",
+									"    'reserved': false",
+									"};",
+									"",
+									"pm.environment.set('request_body', JSON.stringify(body));",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{{request_body}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{book_svc}}/books/{{book_guid}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete book",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{book_svc}}/books/{{book_guid}}"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Borrow History Management",
+			"item": [
+				{
+					"name": "Get history list",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{borrow_svc}}/history"
+					},
+					"response": []
+				},
+				{
+					"name": "Get history",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{borrow_svc}}/history/{{history_guid}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Borrow book",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let body = {",
+									"    'book_guid': pm.collectionVariables.get('book_guid')",
+									"};",
+									"",
+									"pm.environment.set('request_body', JSON.stringify(body));",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set('history_guid', pm.response.json()['data']['guid'])"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{{request_body}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{borrow_svc}}/borrow"
+					},
+					"response": []
+				},
+				{
+					"name": "Return book",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let body = {",
+									"    'history_guid': pm.collectionVariables.get('history_guid')",
+									"};",
+									"",
+									"pm.environment.set('request_body', JSON.stringify(body));",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{{request_body}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{borrow_svc}}/return"
+					},
+					"response": []
+				},
+				{
+					"name": "Renew book",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let body = {",
+									"    'history_guid': pm.collectionVariables.get('history_guid')",
+									"};",
+									"",
+									"pm.environment.set('request_body', JSON.stringify(body));",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{{request_body}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{borrow_svc}}/renew"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Fines",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{borrow_svc}}/fines"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Reservation Management",
+			"item": [
+				{
+					"name": "Get Reservations",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{reservation_svc}}/reservations"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Reservation",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{reservation_svc}}/reservations/{{reservation_guid}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Make Reservation",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let body = {",
+									"    'book_guid': pm.collectionVariables.get('book_guid')",
+									"};",
+									"",
+									"pm.environment.set('request_body', JSON.stringify(body));",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set('reservation_guid', pm.response.json()['data']['guid'])"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{{request_body}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{reservation_svc}}/reservations"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Reservation",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{reservation_svc}}/reservations/{{reservation_guid}}"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "user_email",
+			"value": ""
+		},
+		{
+			"key": "password",
+			"value": ""
+		},
+		{
+			"key": "user_svc",
+			"value": ""
+		},
+		{
+			"key": "activation_code",
+			"value": ""
+		},
+		{
+			"key": "access_token",
+			"value": ""
+		},
+		{
+			"key": "refresh_token",
+			"value": ""
+		},
+		{
+			"key": "name",
+			"value": ""
+		},
+		{
+			"key": "phone_number",
+			"value": ""
+		},
+		{
+			"key": "reset_code",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "admin_access_token",
+			"value": ""
+		},
+		{
+			"key": "admin_refresh_token",
+			"value": ""
+		},
+		{
+			"key": "admin_user_email",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "admin_password",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "admin_svc",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "user_guid",
+			"value": ""
+		},
+		{
+			"key": "book_svc",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "book_guid",
+			"value": ""
+		},
+		{
+			"key": "borrow_svc",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "history_guid",
+			"value": ""
+		},
+		{
+			"key": "reservation_svc",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "reservation_guid",
+			"value": ""
+		}
+	]
+}
